@@ -328,8 +328,11 @@
 		<Compile Include="src\Media\SongCollection.cs" />
 		<Compile Include="src\Media\VideoSoundtrackType.cs" />
 		<Compile Include="src\Media\VisualizationData.cs" />
+		<Compile Include="src\Media\Xiph\BaseYUVPlayer.cs" />
 		<Compile Include="src\Media\Xiph\Video.cs" />
 		<Compile Include="src\Media\Xiph\VideoPlayer.cs" />
+		<Compile Include="src\Media\Xiph\VideoPlayerAV1.cs" />
+		<Compile Include="src\Media\Xiph\dav1dfile.cs" />
 		<Compile Include="src\NamespaceDocs.cs" />
 		<Compile Include="src\Plane.cs" />
 		<Compile Include="src\PlaneIntersectionType.cs" />
@@ -383,6 +386,9 @@
 		</EmbeddedResource>
 		<EmbeddedResource Include="src\Graphics\Effect\YUVToRGBA\YUVToRGBAEffect.fxb">
 			<LogicalName>Microsoft.Xna.Framework.Graphics.Effect.Resources.YUVToRGBAEffect.fxb</LogicalName>
+		</EmbeddedResource>
+		<EmbeddedResource Include="src\Graphics\Effect\YUVToRGBA\YUVToRGBAEffectR.fxb">
+			<LogicalName>Microsoft.Xna.Framework.Graphics.Effect.Resources.YUVToRGBAEffectR.fxb</LogicalName>
 		</EmbeddedResource>
 	</ItemGroup>
 </Project>
