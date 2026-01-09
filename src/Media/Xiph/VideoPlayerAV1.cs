@@ -184,6 +184,9 @@ namespace Microsoft.Xna.Framework.Media
 				// If looping, go back to the start. Otherwise, we'll be exiting.
 				if (IsLooped)
 				{
+					// Starting over!
+					currentFrame = -1;
+
 					// Start! Again!
 					timer.Start();
 				}
@@ -293,6 +296,8 @@ namespace Microsoft.Xna.Framework.Media
 
 			// Update the player state now, before initializing
 			State = MediaState.Playing;
+
+			currentFrame = -1;
 
 			// Set up the texture data
 			// The VideoPlayer will use the GraphicsDevice that is set now.
