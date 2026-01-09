@@ -10,7 +10,7 @@
 #region Using Statements
 using System;
 using System.IO;
-
+using Dav1dfile;
 using Microsoft.Xna.Framework.Graphics;
 #endregion
 
@@ -61,6 +61,12 @@ namespace Microsoft.Xna.Framework.Media
 			private set;
 		}
 
+		internal String Codec
+		{
+			get;
+			private set;
+		}
+
 		#endregion
 
 		#region Internal Variables
@@ -86,24 +92,41 @@ namespace Microsoft.Xna.Framework.Media
 				throw new FileNotFoundException(fileName);
 			}
 
-			IntPtr theora;
 			int width;
 			int height;
 			double fps;
-			Theorafile.th_pixel_fmt fmt;
-			Theorafile.tf_fopen(fileName, out theora);
-			Theorafile.tf_videoinfo(
-				theora,
-				out width,
-				out height,
-				out fps,
-				out fmt
-			);
-			Theorafile.tf_close(ref theora);
+			string codec;
+			// TODO - can we sniff magic bytes here?
+			if (Environment.GetEnvironmentVariable("FNA_VIDEO_CODEC") == "AV1")
+			{
+				IntPtr context;
+				Bindings.PixelLayout pixelLayout;
+				Bindings.df_fopen(fileName, out context);
+				Bindings.df_videoinfo(context, out width, out height, out pixelLayout);
+				Bindings.df_close(context);
+				fps = 30; // TODO this is a hack
+				codec = "AV1";
+			}
+			else
+			{
+				IntPtr theora;
+				Theorafile.th_pixel_fmt fmt;
+				Theorafile.tf_fopen(fileName, out theora);
+				Theorafile.tf_videoinfo(
+					theora,
+					out width,
+					out height,
+					out fps,
+					out fmt
+				);
+				Theorafile.tf_close(ref theora);
+				codec = "Theora";
+			}
 
 			Width = width;
 			Height = height;
 			FramesPerSecond = (float) fps;
+			Codec = codec;
 
 			// FIXME: This is a part of the Duration hack!
 			Duration = TimeSpan.MaxValue;
@@ -141,7 +164,7 @@ namespace Microsoft.Xna.Framework.Media
 		#endregion
 
 		#region Public Extensions
-		
+
 		public static Video FromUriEXT(Uri uri, GraphicsDevice graphicsDevice)
 		{
 			string path;
@@ -169,7 +192,7 @@ namespace Microsoft.Xna.Framework.Media
 
 		internal int audioTrack = -1;
 		internal int videoTrack = -1;
-		internal VideoPlayer parent;
+		internal IVideoPlayerImpl parent;
 
 		public void SetAudioTrackEXT(int track)
 		{
