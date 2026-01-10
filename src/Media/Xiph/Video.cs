@@ -92,20 +92,19 @@ namespace Microsoft.Xna.Framework.Media
 				throw new FileNotFoundException(fileName);
 			}
 
+			Codec = GuessCodec(fileName);
+
 			int width;
 			int height;
 			double fps;
-			string codec;
-			// TODO - can we sniff magic bytes here?
-			if (Environment.GetEnvironmentVariable("FNA_VIDEO_CODEC") == "AV1")
+			if (Codec == "AV1")
 			{
 				IntPtr context;
 				Bindings.PixelLayout pixelLayout;
 				Bindings.df_fopen(fileName, out context);
 				Bindings.df_videoinfo(context, out width, out height, out pixelLayout);
 				Bindings.df_close(context);
-				fps = 30; // TODO this is a hack
-				codec = "AV1";
+				fps = 25; // TODO this is a hack
 			}
 			else
 			{
@@ -120,13 +119,11 @@ namespace Microsoft.Xna.Framework.Media
 					out fmt
 				);
 				Theorafile.tf_close(ref theora);
-				codec = "Theora";
 			}
 
 			Width = width;
 			Height = height;
 			FramesPerSecond = (float) fps;
-			Codec = codec;
 
 			// FIXME: This is a part of the Duration hack!
 			Duration = TimeSpan.MaxValue;
@@ -141,6 +138,18 @@ namespace Microsoft.Xna.Framework.Media
 			int height,
 			float framesPerSecond,
 			VideoSoundtrackType soundtrackType
+		) : this(fileName, device, durationMS, width, height, framesPerSecond, soundtrackType, GuessCodec(fileName)) {
+		}
+
+		internal Video(
+			string fileName,
+			GraphicsDevice device,
+			int durationMS,
+			int width,
+			int height,
+			float framesPerSecond,
+			VideoSoundtrackType soundtrackType,
+			string codec
 		) {
 			handle = fileName;
 			GraphicsDevice = device;
@@ -153,6 +162,7 @@ namespace Microsoft.Xna.Framework.Media
 			Width = width;
 			Height = height;
 			FramesPerSecond = framesPerSecond;
+			Codec = codec;
 
 			// FIXME: Oh, hey! I wish we had this info in Theora!
 			Duration = TimeSpan.FromMilliseconds(durationMS);
@@ -210,6 +220,15 @@ namespace Microsoft.Xna.Framework.Media
 			{
 				parent.SetVideoTrackEXT(track);
 			}
+		}
+
+		#endregion
+
+		#region Private Static Methods
+
+		private static string GuessCodec(String filename)
+		{
+			return filename.ToLower().EndsWith(".obu") ? "AV1" : "Theora";
 		}
 
 		#endregion
