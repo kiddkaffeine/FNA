@@ -9,8 +9,8 @@
 
 #region Using Statements
 using System;
+using System.Collections.Generic;
 using System.IO;
-using Dav1dfile;
 using Microsoft.Xna.Framework.Graphics;
 #endregion
 
@@ -93,37 +93,10 @@ namespace Microsoft.Xna.Framework.Media
 			}
 
 			Codec = GuessCodec(fileName);
-
-			int width;
-			int height;
-			double fps;
-			if (Codec == "AV1")
-			{
-				IntPtr context;
-				Bindings.PixelLayout pixelLayout;
-				Bindings.df_fopen(fileName, out context);
-				Bindings.df_videoinfo(context, out width, out height, out pixelLayout);
-				Bindings.df_close(context);
-				fps = 25; // TODO this is a hack
-			}
-			else
-			{
-				IntPtr theora;
-				Theorafile.th_pixel_fmt fmt;
-				Theorafile.tf_fopen(fileName, out theora);
-				Theorafile.tf_videoinfo(
-					theora,
-					out width,
-					out height,
-					out fps,
-					out fmt
-				);
-				Theorafile.tf_close(ref theora);
-			}
-
-			Width = width;
-			Height = height;
-			FramesPerSecond = (float) fps;
+			VideoPlayer.VideoInfo info = VideoPlayer.codecInfoReaders[Codec](fileName);
+			Width = info.width;
+			Height = info.height;
+			FramesPerSecond = (float) info.fps;
 
 			// FIXME: This is a part of the Duration hack!
 			Duration = TimeSpan.MaxValue;
@@ -228,7 +201,18 @@ namespace Microsoft.Xna.Framework.Media
 
 		private static string GuessCodec(String filename)
 		{
-			return filename.ToLower().EndsWith(".obu") ? "AV1" : "Theora";
+			foreach (KeyValuePair<string, List<String>> kvp in VideoPlayer.codecExtensions)
+			{
+				foreach (String ext in kvp.Value)
+				{
+					if (filename.ToLower().EndsWith(ext))
+					{
+						return kvp.Key;
+					}
+				}
+			}
+
+			return "Theora";
 		}
 
 		#endregion

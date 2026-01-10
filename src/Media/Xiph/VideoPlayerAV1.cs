@@ -470,5 +470,22 @@ namespace Microsoft.Xna.Framework.Media
 		}
 
 		#endregion
+
+		#region Video support methods
+
+		internal static VideoPlayer.VideoInfo ReadInfo(string fileName)
+		{
+			IntPtr context;
+			int width, height;
+			Bindings.PixelLayout pixelLayout;
+			Bindings.df_fopen(fileName, out context);
+			Bindings.df_videoinfo(context, out width, out height, out pixelLayout);
+			Bindings.df_close(context);
+			double fps = 25; // TODO this is a hack
+
+			return new VideoPlayer.VideoInfo() { fps = fps, width = width, height = height };
+		}
+
+		#endregion
 	}
 }

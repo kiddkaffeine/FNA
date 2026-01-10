@@ -611,5 +611,28 @@ namespace Microsoft.Xna.Framework.Media
 		}
 
 		#endregion
+
+		#region Video support methods
+
+		internal static VideoPlayer.VideoInfo ReadInfo(string fileName)
+		{
+			IntPtr theora;
+			int width, height;
+			double fps;
+			Theorafile.th_pixel_fmt fmt;
+			Theorafile.tf_fopen(fileName, out theora);
+			Theorafile.tf_videoinfo(
+				theora,
+				out width,
+				out height,
+				out fps,
+				out fmt
+			);
+			Theorafile.tf_close(ref theora);
+
+			return new VideoPlayer.VideoInfo() { fps = fps, width = width, height = height };
+		}
+
+		#endregion
 	}
 }

@@ -9,7 +9,7 @@
 
 #region Using Statements
 using System;
-
+using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 #endregion
 
@@ -117,6 +117,27 @@ namespace Microsoft.Xna.Framework.Media
 		#region Private Member Data: Implementation
 
 		private IVideoPlayerImpl impl;
+
+		internal static Dictionary<string, List<String>> codecExtensions =
+			new Dictionary<string, List<String>>
+			{
+				{ "AV1", new List<String> { "obu", "av1" } },
+				{ "Theora", new List<String> { "ogv" } }
+			};
+
+		internal static Dictionary<string, Func<string, VideoInfo>> codecInfoReaders =
+			new Dictionary<string, Func<string, VideoInfo>>
+			{
+				{ "AV1", VideoPlayerAV1.ReadInfo },
+				{ "Theora", VideoPlayerTheora.ReadInfo }
+			};
+
+		internal static Dictionary<string, Func<IVideoPlayerImpl>> codecPlayers =
+			new Dictionary<string, Func<IVideoPlayerImpl>>
+			{
+				{ "AV1", () => new VideoPlayerAV1() },
+				{ "Theora", () => new VideoPlayerTheora() },
+			};
 
 		#endregion
 
@@ -238,6 +259,21 @@ namespace Microsoft.Xna.Framework.Media
 			{
 				impl.SetVideoTrackEXT(track);
 			}
+		}
+
+		public static void AddCodecEXT(string codecName, List<String> extensions, Func<string, VideoInfo> reader,
+			Func<IVideoPlayerImpl> implementation)
+		{
+			codecExtensions.Add(codecName, extensions);
+			codecInfoReaders.Add(codecName, reader);
+			codecPlayers.Add(codecName, implementation);
+		}
+
+		public struct VideoInfo
+		{
+			public int width;
+			public int height;
+			public double fps;
 		}
 
 		#endregion
