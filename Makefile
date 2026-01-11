@@ -312,6 +312,7 @@ SRC = \
 	src/Media/VideoSoundtrackType.cs \
 	src/Media/VisualizationData.cs \
 	src/Media/Xiph/IVideoPlayerImpl.cs \
+	src/Media/Xiph/BaseYUVPlayer.cs \
 	src/Media/Xiph/Video.cs \
 	src/Media/Xiph/VideoPlayer.cs \
 	src/Media/Xiph/VideoPlayerTheora.cs \

@@ -15,15 +15,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Microsoft.Xna.Framework.Media
 {
-	public sealed class VideoPlayer : IDisposable
+	public sealed class VideoPlayer : BaseYUVPlayer, IVideoPlayerImpl
 	{
 		#region Public Member Data: XNA VideoPlayer Implementation
-
-		public bool IsDisposed
-		{
-			get;
-			private set;
-		}
 
 		private bool backing_islooped;
 		public bool IsLooped
@@ -155,13 +149,12 @@ namespace Microsoft.Xna.Framework.Media
 		public VideoPlayer()
 		{
 			// Initialize public members.
-			IsDisposed = false;
 			IsLooped = false;
 			IsMuted = false;
 			Volume = 1.0f;
 		}
 
-		public void Dispose()
+		public override void Dispose()
 		{
 			checkDisposed();
 
@@ -171,7 +164,6 @@ namespace Microsoft.Xna.Framework.Media
 			}
 
 			impl = null;
-			IsDisposed = true;
 		}
 
 		public Texture2D GetTexture()
