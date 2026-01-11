@@ -311,8 +311,10 @@ SRC = \
 	src/Media/SongCollection.cs \
 	src/Media/VideoSoundtrackType.cs \
 	src/Media/VisualizationData.cs \
+	src/Media/Xiph/IVideoPlayerImpl.cs \
 	src/Media/Xiph/Video.cs \
 	src/Media/Xiph/VideoPlayer.cs \
+	src/Media/Xiph/VideoPlayerTheora.cs \
 	src/NamespaceDocs.cs \
 	src/Plane.cs \
 	src/PlaneIntersectionType.cs \
